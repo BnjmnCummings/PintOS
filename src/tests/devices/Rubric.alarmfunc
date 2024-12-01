@@ -1,0 +1,4 @@
+Functionality of alarm clock:
+10	alarm-no-busy-wait
+5	alarm-single
+5	alarm-multiple

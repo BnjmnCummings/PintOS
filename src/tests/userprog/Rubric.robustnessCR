@@ -1,0 +1,9 @@
+Full robustness of argument passing and syscall handling code:
+- Test user stack overflow robustness of "exec" system calls and user code.
+5	exec-over-arg
+5	exec-over-args
+5	overflow-stack
+
+- Test syscall user provided buffer validity checks.
+5	read-bad-buf
+5	write-bad-buf

@@ -1,0 +1,28 @@
+#! /bin/sh
+
+# Expects to be called from with a given task's build directory
+
+# Relative path to GDB macros file within PintOS repo.  
+# Customize for your machine if required.
+GDBMACROS=../../misc/gdb-macros
+
+# Choose correct GDB for the current environment:
+GDB=gdb 
+
+UNAME_S=`uname -s`
+if test "$UNAME_S" = "Darwin"; then 
+  GDB=i686-elf-gdb
+fi
+
+if command -v i386-elf-gdb >/dev/null 2>&1; then
+  GDB=i386-elf-gdb
+fi
+
+# Run GDB.
+if test -f "$GDBMACROS"; then
+  exec $GDB -x "$GDBMACROS" "$@"
+else
+  echo "*** $GDBMACROS does not exist ***"
+  echo "*** PintOS GDB macros will not be available ***"
+  exec $GDB "$@"
+fi

@@ -1,0 +1,385 @@
+\documentclass[a4paper,11pt]{article}
+
+\setcounter{tocdepth}{3}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsthm}
+\usepackage{url}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{minted}
+\usepackage[tt=false, type1=true]{libertine}
+\usepackage[libertine]{newtxmath}
+\usepackage[scaled=0.8, lining]{FiraMono}
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\setstretch{1.15}
+
+\definecolor[named]{ACMPurple}{cmyk}{0.55,1,0,0.15}
+\definecolor[named]{ACMDarkBlue}{cmyk}{1,0.58,0,0.21}
+\hypersetup{colorlinks,
+    linkcolor=ACMPurple,
+    citecolor=ACMPurple,
+    urlcolor=ACMDarkBlue,
+    filecolor=ACMDarkBlue}
+
+\usemintedstyle{xcode}
+
+%inline code styling
+\newmintinline[shell]{shell}{fontsize=\normalsize, breaklines}
+\newmintinline[asm]{asm}{fontsize=\normalsize, breaklines}
+
+% For illustrations
+\usepackage{tikz}
+
+%% Comments
+\newif\ifcomment
+
+% Comment this line to remove the comments
+\commenttrue
+
+\newcommand{\genericcomment}[2]{
+\ifcomment
+\begin{center}
+\fbox{
+\begin{minipage}{4in}
+{\bf {#2}'s comment:} {\it #1}
+\end{minipage}}
+\end{center}
+\fi}
+
+\newcommand{\boxit}[1]{
+\begin{center}
+  \fbox{
+  \begin{minipage}{6in}
+    #1
+  \end{minipage}
+  }
+\end{center}
+}
+
+\newcommand{\markcomment}[1]{
+\genericcomment{#1}{Mark}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{PintOS Task 0 - Codebase Preview}
+\date{}
+
+\author{
+COMP50007.1 - Laboratory 2 \\
+Department of Computing \\
+Imperial College London
+}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%
+\section*{Summary}
+%%%%%%%%%%%%%%%%%%%%%
+This task is divided into two parts: a codebase preview and a small coding exercise.
+The codebase preview has been designed to help you familiarise yourself with how PintOS is structured
+and requires you to complete a short MCQ AnswerBook assessment to check your understanding of the provided PintOS code.
+The coding exercise has been designed to help you understand how PintOS works
+and is concerned with developing a simple feature in PintOS, called Alarm Clock.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Submit by 19:00 on Wednesday 9th October 2024}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{What To Do:}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{Getting the files required for the exercise}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+You have each been provided with a Git repository on the department's \shell{GitLab} server that contains the files required for this exercise.
+To obtain this skeleton repository you will need to clone it into your local workspace.
+You can do this with the following command:
+%
+\begin{minted}{shell}
+prompt> git clone https://gitlab.doc.ic.ac.uk/lab2425_autumn/pintos_task0_<login>.git
+\end{minted}
+%
+replacing \shell{<login>} with your normal college login.
+You will be prompted for your normal college username and password.
+
+You can also clone the skeleton repository via SSH (and avoid having to type in your username/password for every future clone, pull and push) if you have set up the required public/private keys on GitLab with the command:
+%
+\begin{minted}{shell}
+  prompt> git clone git@gitlab.doc.ic.ac.uk:lab2425_autumn/pintos_task0_<login>.git
+\end{minted}
+%
+again, replacing \shell{<login>} with your normal college login.
+Please feel free to ask a member of the lab support team for help with this if you want to access \shell{GitLab} via SSH but are unsure of how to set it up.
+
+Using either of these commands will create a directory in your current location called \shell{pintos_task0_<login>}.
+For more details about the contents of this repository see section 1.1.1 of the PintOS manual.
+
+This is generally the way that we will hand out all lab exercises this year, so you should ensure that you are comfortable with the process.
+
+
+\subsection*{Finding out about PintOS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Everything that you need to know for the whole PintOS project can be found in the PintOS manual,
+so it is a good idea to read it all eventually.
+However, for the purposes of this codebase preview it should be sufficient that you carefully read sections 1 and 2 
+as well as appendicies A, C, D and E. 
+For some of the MCQ AnswerBook questions, examining the PintOS code-base will also be useful,
+particularly \shell{thread.c}, \shell{thread.h} and \shell{synch} in the \shell{src/threads/} directory
+and \shell{list.c} in the \shell{src/lib/kernel/} directory.\\
+
+\noindent You can find additional guidance on this Task in section 2 of the PintOS manual: ``Task 0: Alarm Clock''
+
+
+\subsection*{Working on PintOS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+You should work on the files in your local workspace, making regular commits and pushes back to your \shell{GitLab} Git repository.
+Recall that you will first need to add any new/modified files to your local Git workspace with:
+%
+\begin{minted}{shell}
+  prompt> git add <filename>
+\end{minted}
+%
+You can then commit your changes to your local index with:
+%
+\begin{minted}{shell}
+  prompt> git commit -m "your *meaningful* commit message here"
+\end{minted}
+%
+Finally you will need to push these changes from your local index to the Git repository with:
+%
+\begin{minted}{shell}
+  prompt> git push origin master
+\end{minted}
+%
+You can check that a push succeeded by looking at the state of your repository using the \shell{GitLab} webpages: 
+
+\url{https://gitlab.doc.ic.ac.uk/}
+
+\noindent (you will need to login with your normal college username and password).
+
+You are of course free to utilise the more advanced features of Git such as branching and tagging.
+Further details can be found in your first year notes and at:
+
+\url{https://workspace.imperial.ac.uk/computing/Public/files/Git-Intro.pdf}.\\
+
+{\bf Important:} Your final submission will be taken from your \shell{pintos_task0_<login>} \shell{GitLab} repository, 
+so you must understand how to push your work to it correctly. 
+If in any doubt, come and get help from the TF office (room 306) or during one of the lab sessions.
+It is {\bf your} responsibility to ensure that you submit the correct version of your work.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Part A - Codebase Preview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this part of the task you will be required to answer a series of MCQs (Multiple Choice Questions) that test your understanding of the basic PintOS concepts and the provided PintOS code-base.
+If you have completed the pre-reading suggested above, then you should not find the MCQ AnswerBook test particularly challenging.
+
+The MCQ AnswerBook test will be scheduled on Scientia, and the questions will be based on the following areas of PintOS.
+The test will be open-book, so you are advised to answer these questions yourelf ahead of time.
+
+\paragraph{Part 1:}
+Which Git command should you run to retrieve a copy of your individual repository for PintOS Task 0 in your local directory? \\
+(\textit{Hint: be specific to this task and think about ease of use.})
+
+\paragraph{Part 2:}
+Why is using the {\tt strcpy()} function to copy strings usually a bad idea? \\
+(\textit{Hint: be sure to clearly identify the problem.})
+
+\paragraph{Part 3:}
+If test \shell{src/tests/devices/alarm-multiple} fails, where would you find its output and result logs? \\
+Provide both paths and filenames. \\
+(\textit{Hint: you might want to run this test and find out.}) 
+ 
+\paragraph{Part 4:}
+In PintOS, a thread is characterized by a struct and an execution stack. \\
+(a) What are the limitations on the size of these data structures? \\
+(b) Explain how this relates to stack overflow and how PintOS identifies if a stack overflow has occurred.
+
+\paragraph{Part 5:}
+Explain how thread scheduling in PintOS currently works in roughly 300 words.
+Include the chain of execution of function calls. \\
+(\textit{Hint: we expect you to at least mention which functions participate in a context switch, how they interact, how and when the thread state is modified and the role of interrupts.)}
+
+\paragraph{Part 6:}
+In PintOS, what is the default length (in ticks \emph{and} in seconds) of a scheduler time slice? \\
+(\textit{Hint: read the Task 0 documentation carefully.})
+
+\paragraph{Part 7:}
+In PintOS, how would you print an unsigned 64 bit \shell{int}?
+(Consider that you are working with C99). \\
+Don't forget to state any inclusions needed by your code.
+
+\paragraph{Part 8:}
+Explain the property of {\bf reproducibility} and how the lack of reproducibility will affect debugging.
+
+\paragraph{Part 9:}
+In PintOS, locks are implemented on top of semaphores.\\
+(a) How do the functions in the API of locks relate to those of semaphores?\\
+(b) What extra property do locks have that semaphores do not?
+
+\paragraph{Part 10:}
+Define what is meant by a {\bf race-condition}. Why is the test \shell{ if(x \!= null) } 
+insufficient to prevent a segmentation fault from occurring on an attempted access to a structure through pointer \shell{x}?\\
+(\textit{Hint: you should assume that the pointer variable is correctly typed, that the structure was successfully initialised earlier in the program 
+and that there are other threads running in parallel.})
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Part B - The Alarm Clock}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this part, you are required to implement a simple functionality in PintOS and to answer the design document questions listed below.
+
+\subsection*{Coding the Alarm Clock in PintOS}
+Reimplement \shell{timer_sleep()}, defined in '\shell{devices/timer.c}’.\\ 
+
+\noindent Although a working implementation of \shell{timer_sleep()} is provided, it “busy waits,” that is, 
+it spins in a loop checking the current time and calling \shell{thread_yield()} until enough time has gone by. 
+You need to reimplement it to avoid busy waiting. 
+Further instructions and hints can be found in the PintOS manual.\\
+
+\noindent The marks for this part are awarded as follows:
+
+Passing the Automated Tests ({\bf 8 marks}).
+
+Performance in the Code Review ({\bf 12 marks}). 
+
+Answering the Design Document Questions below ({\bf 10 marks}).
+
+\subsection*{Task 0 Design Document Questions:}
+
+\subsubsection*{Data Structures}
+A1: ({\bf 2 marks}) \\
+Copy here the declaration of each new or changed `\shell{struct}' or `\shell{struct}' member, 
+global or static variable, `\shell{typedef}', or enumeration.
+Identify the purpose of each in roughly 25 words.
+
+\subsubsection*{Algorithms}
+A2: ({\bf 2 marks}) \\
+Briefly describe what happens in a call to \shell{timer_sleep()}, including the actions performed by the timer interrupt handler on each timer tick. \\
+
+\noindent A3: ({\bf 2 marks}) \\
+What steps are taken to minimize the amount of time spent in the timer interrupt handler?
+
+\subsubsection*{Synchronization}
+A4: ({\bf 1 mark}) \\
+How are race conditions avoided when multiple threads call \shell{timer_sleep()} simultaneously? \\ 
+
+\noindent A5: ({\bf 1 mark}) \\
+How are race conditions avoided when a timer interrupt occurs during a call to \shell{timer_sleep()}?
+
+\subsubsection*{Rationale}
+A6: ({\bf 2 marks}) \\
+Why did you choose this design? \\
+In what ways is it superior to another design you considered?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Testing}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As you work, you should \emph{add}, \emph{commit} and \emph{push} your changes to your Git repository, as discussed above.
+You should also be carefully testing your work throughout the exercise. 
+
+You should be used to regularly testing your code locally on your development machine, 
+but to help you ensure that your code will compile and run as expected in our testing environment,
+we have provided you with the Lab Testing Service: \shell{LabTS}.
+
+\shell{LabTS} will clone your \shell{GitLab} repository and run several automated test processes over your work.
+This will happen automatically after the deadline, but can also be requested during the course of the exercise (usually on a sub-set of the final tests). 
+
+You can access the \shell{LabTS} webpages at:
+
+\url{https://teaching.doc.ic.ac.uk/labts}
+
+\noindent (note that you will be required to log-in with your normal college username and password.)
+
+If you click through to your \shell{pintos_task0_<login>} repository you will see a list of the different versions of your work that you have pushed.
+Next to each commit you will see a button that will allow you to request that this version of your work is run through the automated test process.
+If you click this button your work will be tested (this may take a few minutes) and the results will appear in the relevant column.\\
+
+{\bf Important:} It is {\bf your} responsibility to ensure that your code behaves as expected in our automated test environment. 
+Code that fails to compile/run in this environment will score {\bf zero marks} for implementation correctness.
+You should find that this environment behaves like the set-up found on our lab machines.
+If you are experiencing any problems in this regard then you should seek help from a lab demonstrator or the lab coordinator at the earliest opportunity.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Submission}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Your \shell{GitLab} repository should contain the final submission for your alarm clock implementation.
+\shell{LabTS} can be used to test any revision of your work that you wish.
+However, you will still need to submit a \emph{revision id} to Scientia so that we know which version of your code you consider to be your final submission. 
+Prior to submission, you should check the state of your \shell{GitLab} repository using the \shell{LabTS} webpages:
+
+\url{https://teaching.doc.ic.ac.uk/labts}
+
+\noindent If you click through to your \shell{pintos_task0_<login>} repository you will see a list of the different versions of your work that you have pushed.
+Next to each commit you will see a link to that commit on \shell{GitLab} as well as a button to submit that version of your code for assessment.
+Pressing this button will redirect you to Scientia (automatically submitting your revision id)
+and prompt you to upload an answers file and a design document under the usual ``original work'' disclaimer.
+
+You should submit to Scientia the version of your code that you consider to be ``final''.
+You can change this later by submitting a different version to Scientia as usual.
+The submission button on LabTS will be replaced with a green confirmation label if the submission has been successful.
+
+You should submit your Task 0 design document (\shell{designT0.pdf}) and the chosen version of your code to Scientia by 19:00 on Wednesday 9th October 2024.\\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Assessment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In total there are {\bf 50 marks} available in this exercise.\\
+These are allocated as follows:
+%
+\begin{center}
+\begin{tabular}{l@{\qquad\qquad}l}
+  Part A: MCQ Answerbook Test & {\bf 20 marks} \\
+  Part B: Automated Tests     & {\bf 8 marks} \\
+  Part B: Code Review         & {\bf 12 marks} \\
+  Part B: Design Document     & {\bf 10 marks} \\
+\end{tabular}
+\end{center}
+%
+Any program that does not compile and run will score {\bf 0 marks} for Part B: Automated Tests.\\[-0.8em]
+
+\noindent The marks for Part A will contribute to your COMP50004 Operating Systems coursework grade,
+while your marks for Part B will contribute to your COMP50007.1 Laboratory 2 grade.\\
+
+\noindent \textbf{We aim for feedback on this exercise to be returned by Wednesday 25th October 2023.}
+
+\subsubsection*{What should I expect from the Task 0 code-review?}
+
+The code-review for this task will be conducted offline, as it would be logistically
+impossible to arrange face-to-face sessions with the whole cohort.
+Our Task 0 code-review will cover \textbf{four} main areas: 
+functional correctness, efficiency, design quality and general coding style.
+
+\begin{itemize}
+  \item For \textbf{functional correctness}, we will be looking to see if your solution can handle many threads going to sleep or waking-up at the same time, without any unnecessary delays. 
+  We will also be checking if your code for \shell{timer_sleep} and \shell{timer_interrupt} is free of any race conditions.
+    
+  \item For \textbf{efficiency}, we will be looking at what steps you have taken to minimise the time spent inside your timer interrupt handler. Think about how you store sleeping threads and track how long they must sleep for. We will also be looking at your use of memory.
+    
+  \item For \textbf{design quality}, we will be looking at how your have integrated your alarm-clock code with the rest of the provided operating system. We want to see clear module boundaries and use of abstraction.
+ 
+  \item For \textbf{general coding style}, we will be paying attention to all of the usual elements of good style that you should be used to from last year (e.g. code layout, appropriate use of comments, avoiding magic numbers, etc.) as well as your use of git (e.g. commit frequency and commit message quality).
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

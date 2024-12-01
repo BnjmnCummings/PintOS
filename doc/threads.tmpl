@@ -1,0 +1,202 @@
+            +----------------------+
+            |        OS 211        |
+            |  TASK 1: SCHEDULING  |
+            |    DESIGN DOCUMENT   |
+            +----------------------+
+                   
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, or notes for the
+>> markers, please give them here.
+
+>> Please cite any offline or online sources you consulted while preparing your 
+>> submission, other than the PintOS documentation, course text, lecture notes 
+>> and course staff.
+
+             PRIORITY SCHEDULING
+             ===================
+
+---- DATA STRUCTURES ----
+
+>> A1: (2 marks) 
+>> Copy here the declaration of each new or changed `struct' or `struct' member,
+>> global or static variable, `typedef', or enumeration.  
+>> Identify the purpose of each in roughly 25 words.
+
+--SERHII--
+Encapsulates the donated priority integer value. This was a design decision me and
+Freddie made at the start, as it would allow us to easily add and remove fields
+containing information about the donated priority, such as its donor or a potential
+list_elem if we decide to put it in the list. Therefore the rest of our code relies
+on the priority being a struct, so even though in the end we didn't need any other
+fields, our code is now more flexible for future changes.
+struct donated_prio
+{
+    int priority;
+};
+
+Added fields to thread to implement donation.
+struct thread
+  {
+    ...
+    struct donated_prio* donated_prios[2*MAX_DONATIONS];  /* Queue of donated priorities */
+    struct lock donated_lock;    /* Used for synchronising donation calls */
+    struct lock* donation_lock;  /* Records the lock held by the donee */
+    ...
+  }
+
+>> A2: (4 marks) 
+>> Draw a diagram that illustrates a nested donation in your structure and 
+>> briefly explain how this works.
+
+--SERHII--
+                            T2                                         T1
+    H                  lock_acquire()              M              lock_acquire()             L
+  -----                ------------->           -------           ------------->           -----
+  donation_lock=lock(M)                   donation_lock=lock(L)                     donation_lock=NULL
+  donated_prios=[]                        donated_prios=[prio(H)]                   donated_prios=[prio(H), prio(M)]
+
+In this example L has lowest priority and H highest.
+T1: M attempts to acquire a lock that L holds, so it donates it's effective priority to L,
+which is stored in donated_prios queue. M's donation_lock is set to the lock held by L.
+Since L's donation_lock is NULL, it doesn't nest donations.
+
+T2: H attempts to acquire a lock held by M. It therefore donates it's effective priority
+to M by storing it in the donated_prios queue. It then checks the donation_lock pointer,
+if there is a lock stored there, it also donates to the lock's holder i.e. L, so H's priority
+is stored in the donated_prios queue of L. Since L's donation_lock is NULL, it doesn't next
+further donations. Lastly, H's donation_lock is set to point at M's lock.
+
+---- ALGORITHMS ----
+
+>> A3: (3 marks) 
+>> How do you ensure that the highest priority waiting thread wakes up first for
+>> a (i) semaphore, (ii) lock, or (iii) condition variable?
+
+(i)   By using list_max() on the sema->waiters list
+(ii)  Lock uses a sema to store blocked threads, so it's behaviour is tied to
+      the sema returning highest priority thread.
+(iii) MIGHT BE WRONG, TALK TO FREDDIE - WAITER INSERTED THEN THREAD DONATED TO?
+
+>> A4: (3 marks)
+>> Describe the sequence of events when a call to lock_acquire() causes a 
+>> priority donation. 
+>> How is nested donation handled?
+
+Priority donation happens if the lock has a holder. During this process:
+A priority struct is initialised on the stack. The current thread's
+effective priority is stored in the struct. Then donate_priority() is called where
+the struct is added to both the holder's and the lock's donated_prios arrays.
+After, it checks if the holder has donated to another thread, in which case it
+recursively calls donate_priority() on the donation_lock with the same donated_prio.
+After the chain of donations has happened, the function returns from donate_priority
+back into lock_acquire. Where it stores a pointer to the lock in the thread's donation_lock
+field, for other threads to chain donate. After this the ready_list is sorted because at
+least one thread has increased in priority. Then the thread is sema_down'd to wait for
+the lock to be released. When it becomes running again, the donated priority is removed
+from the lock and the donation_lock field is reset to signify that the thread is no
+longer donating to anything. Lastly, the thread picks up the lock and adopts all
+the priorities left on the lock.
+
+>> A5: (3 marks)
+>> Describe the sequence of events when lock_release() is called on a lock that 
+>> a higher-priority thread is waiting for.
+
+The lock holder is set to NULL to free it up for another thread to acquire. After which
+the function iterates through all the donated_prios stored in the lock, and removes them
+all from the current thread. After which sema_up is called to wake up a waiting thread
+with the highest priority.
+
+---- SYNCHRONIZATION ----
+
+>> A6: (2 marks)
+>> How do you avoid a race condition in thread_set_priority() when a thread 
+>> needs to recompute its effective priority, but the donated priorities 
+>> potentially change during the computation?
+>> Can you use a lock to avoid the race?
+
+Our code disables interrupts during critical sections of code in thread_set_priority
+and thread_get_priority. We refactored the check for preemptive yielding to have
+the ready_list access and priority overwrite inside the interrupt, but the actual yield
+would happen outside the interrupt, to match the ASSERT condition. Inside thread_get_priority,
+access to public donated_prios array and priority field is in a disabled interrupt state
+to prevent race conditions. We cannot use a lock, as thread_get_priority is called inside
+lock_acquire which would lead to an infinite loop. This is also why it wouldn't make sense
+to use locks in thread_set_priority.
+
+---- RATIONALE ----
+
+>> A7: (3 marks)
+>> Why did you choose this design?  
+>> In what ways is it superior to another design you considered?
+
+Originally we planned to store donated_prios in lists rather than arrays. However
+we then realised that the same priority will have to be stored in multiple threads
+to implement chain donation, which would force us to make many list_elems for the same
+donated_prio, which we deemed to not be clean code. We instead used arrays. This had 
+a downside in that we had to reimplement some function that were provided for lists,
+and some operations are less efficient such as insert_ordered, but the complexity is
+the same so we deemed it worth the sacrafice as we got a much simpler implementation
+of priority donate.
+
+Another design decision we made is to store a copy of pririties inside the thread 
+struct. This leads to some memory duplication, potentially making our code unstable 
+if the two arrays become out of sync, but this is fixed by having a working implementation.
+The advantage of this is that when we attempt to calculate the threads priority, then we
+can simply check the head element and compare it to base priority, as the array behaves
+like a queue with our implementation, making this operation really efficient which is
+important as it is often called in a disabled interrupt state. Alternative design would
+make us traverse every held lock and find the maximum priority among them, which would 
+be of linear rather than constant complexity. This makes the implemnetation more complicated
+and less efficient inside interrupt, which is why we went with our current solution.
+
+              ADVANCED SCHEDULER
+              ==================
+
+---- DATA STRUCTURES ----
+
+>> B1: (2 marks)
+>> Copy here the declaration of each new or changed `struct' or `struct' member,
+>> global or static variable, `typedef', or enumeration. 
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> B2: (3 marks)
+>> Suppose threads A, B, and C have nice values 0, 1, and 2 and each has a 
+>> recent_cpu value of 0. 
+>> Fill in the table below showing the scheduling decision, the priority and the
+>> recent_cpu values for each thread after each given number of timer ticks:
+
+timer  recent_cpu    priority   thread
+ticks   A   B   C   A   B   C   to run
+-----  --  --  --  --  --  --   ------
+ 0
+ 4
+ 8
+12
+16
+20
+24
+28
+32
+36
+
+>> B3: (2 marks) 
+>> Did any ambiguities in the scheduler specification make values in the table 
+>> uncertain? 
+>> If so, what rule did you use to resolve them?
+
+---- RATIONALE ----
+
+>> B4: (3 marks)
+>> Briefly critique your design, pointing out advantages and disadvantages in 
+>> your design choices.

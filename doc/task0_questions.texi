@@ -1,0 +1,84 @@
+@strong{Part A - Codebase Preview: Questions to Prepare for the MCQ AnswerBook Test}
+
+@enumerate  
+
+@item  Which Git command should you run to retrieve a copy of your individual repository for PintOS Task 0 in your local directory? 
+(@dfn{Hint: be specific to this task and think about ease of use.}) 
+
+@item Why is using the strcpy() function to copy strings usually a bad idea?
+(@dfn{Hint: be sure to clearly identify the problem.}) 
+
+@item If test @file{src/tests/devices/alarm-multiple} fails, where would you find its output and result logs? Provide both paths and file names.
+(@dfn{Hint: you might want to run this test to find out.}) 
+
+@item In PintOS, a thread is characterized by a struct and an execution stack. 
+
+(a) What are the limitations on the size of these data structures? 
+
+(b) Explain how this relates to stack overflow and how PintOS identifies it. 
+
+@item Explain how thread scheduling in PintOS currently works in roughly 300 words. Include the chain of execution of function calls. 
+(@dfn{Hint: we expect you to at least mention which functions participate in a context switch, how they interact, how and when the thread state is modified and the role of interrupts.})
+
+
+@item In PintOS, what is the default length (in ticks and in seconds) of a scheduler time slice?
+(@dfn{Hint: read the Task 0 documentation carefully.})
+
+@item In PintOS, how would you print an unsigned 64 bit @code{int}? 
+(Consider that you are working with C99). Don't forget to state any inclusions needed by your code.
+
+@item Explain the property of @strong{reproducibility} and how the lack of reproducibility will affect debugging.
+
+@item In PintOS, locks are implemented on top of semaphores. 
+
+(a) How do the functions in the API of locks relate to those of semaphores?
+
+(b) What extra property do locks have that semaphores do not?
+
+@item Define what is meant by a @strong{race-condition}. Why is the test @code{if(x != null)} insufficient to prevent a segmentation fault from occurring on an attempted access to a structure through the pointer @code{x}?
+(@dfn{Hint: you should assume that the pointer variable is correctly typed, that the structure was successfully initialised earlier in the program and that there are other threads running in parallel.})
+
+@end enumerate
+
+@strong{Part B - The Alarm Clock}
+
+Reimplement @code{timer_sleep()}, defined in @file{devices/timer.c}.
+(@b{30 marks})
+
+Although a working implementation of @code{timer_sleep} is provided, it "busy waits", that is, it spins in a loop checking the current time and calling @code{thread_yield()} until enough time has gone by. 
+You need to reimplement it to avoid busy waiting. 
+Further instructions and hints can be found in the PintOS manual.
+
+The marks for this question are awarded as follows:
+
+Passing the Automated Tests (@b{8 marks}). 
+
+Performance in the Code Review (@b{12 marks}). 
+
+Answering the Design Document Questions below (@b{10 marks}). 
+
+@itemize @w{}
+@item @b{Data Structures}
+
+A1: Copy here the declaration of each new or changed `@code{struct}' or `@code{struct}' member, global or static variable, `@code{typedef}', or enumeration. Identify the purpose of each in roughly 25 words. (@b{2 marks})
+
+@item @b{Algorithms}
+
+A2: Briefly describe what happens in a call to @code{timer_sleep()}, including the actions performed by the timer interrupt handler on each timer tick. (@b{2 marks})
+
+A3: What steps are taken to minimize the amount of time spent in the timer interrupt handler? (@b{2 marks}) 
+
+@item @b{Synchronization}
+
+A4: How are race conditions avoided when multiple threads call @code{timer_sleep()} simultaneously? (@b{1 mark})
+
+A5: How are race conditions avoided when a timer interrupt occurs during a call to @code{timer_sleep()}? (@b{1 mark})
+
+@item @b{Rationale}
+
+A6: Why did you choose this design?  
+In what ways is it superior to another design you considered? (@b{2 marks})
+
+@end itemize
+
+

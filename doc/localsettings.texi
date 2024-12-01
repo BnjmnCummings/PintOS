@@ -1,0 +1,73 @@
+@c Local settings
+
+@set coursenumber COMP50004
+@set labnumber COMP50007/500012
+@set localpintosgitpath /vol/lab/secondyear/osexercise/pintos.git
+@set localpintosbindir /vol/lab/secondyear/bin/ 
+@set localgitpath https://gitlab.doc.ic.ac.uk/lab2425_autumn/pintos_<gnum>.git
+@set localindivgitpath https://gitlab.doc.ic.ac.uk/lab2425_autumn/pintos_task0_<login>.git
+
+@set recommendvnc
+@clear recommendcygwin
+
+@macro localmachines{}
+The machines officially supported for PintOS development are
+the Linux machines in the labs managed by CSG, as described on
+the @uref{http://www.doc.ic.ac.uk/csg/facilities/lab/workstations, ,
+CSG webpage}.  
+@end macro
+
+@macro localpathsetup{}
+The PintOS utilities can be located at @value{localpintosbindir} on CSG-run
+lab machines.
+@end macro
+
+@macro localcrossbuild{}
+Watch the commands executed during the build. 
+On the Linux machines, the ordinary system tools are used.  
+@end macro
+
+@macro localhonorcodepolicy{}
+Please respect the college's plagiarism policy by refraining from reading any coursework solutions available online or elsewhere.
+You must also refrain from posting any of your code or solutions publically online (such as on GitHub) or sharing them with your classmates.
+
+Reading the source code for other operating system kernels, such as Linux or FreeBSD, is allowed, 
+but do not copy code from them literally.  
+You must cite any code that inspired your own in your design documentation.
+@end macro
+
+@macro localcredits{}
+Additional modifications have been made to the documentation, code and task structure when adapting and developing the material
+for use at Imperial College London by Mark Rutland, Feroz Abdul Salam, Mark Wheelhouse, Fabio Luporini and Fidelis Perkonigg.
+
+A number of DoC students have also made valuable contributions to the ongoing development of the @code{pintos} 
+project@footnote{If you have suggestions for improving the @code{pintos} tasks, spot and fix a bug or contribute new material to the project, then you too could be added to the above list. If interested, please discuss with Dr Mark Wheelhouse.}, 
+and we thank them here:
+@itemize
+@item Dragos Dumitrache (2015) - created the first version of the ``pintos for Mac'' guide.
+@item Nandor Licker (2015) - spotted an upcoming change to QEMU in 2015 that would have interfered with the @code{pintos} shutdown code.
+@item Levente Kurusa (2017) - updated the ``pintos for Mac'' guide for more recent versions of MacOS and created the original Mac installation patch files (now merged into the main repo).
+@item Emma Gospodinova (2019) - spotted the need to add the @code{-fno-ptr} and @code{-fno-pie} flags to @code{gcc} calls in the @code{pintos} makefiles, which would otherwise lead to key parts of the user-programs code being optimised out.
+@item Moritz Langenstein (2019) - identified the need for additional explicit type conversions in numerous test cases to support stronger @code{gcc} warning flags.
+@item Alex Tasos (2021) - provided a linker script @code{loaderfix.ld} to fix a bug in linking the @code{pintos} loader (@code{loader.bin}) on Arch Linux systems.
+@item Bartlomiej Cieslar (2021) - spotted a potential double-free in the @code{load_segment} function in @code{src/userprog/process.c}.
+@item Charlie Lidbury (2021) - spotted a potential issue with setting the writable flag for overlapping pages in the @code{load_segment} function in @code{src/userprog/process.c}.
+@item Chun Wong (2023) - spotted a potential race-condition on @code{ready_list} in the @code{threads_ready} function in @code{src/threads/thread.c}.
+@item Luke Moran (2023) - suggested adding div-by-zero checks to Task 2 (including @code{multi-oom}).
+@item Reuben Cartwright (2023) - spotted a counter increment bug in the @code{pt-overflowstk} test.
+@end itemize
+
+
+@end macro
+
+@macro localgitpolicy{}
+Instead, we recommend integrating your team's changes early and often
+using Git (@pxref{Git}).
+
+This is less likely to produce surprises, because everyone can see everyone else's code as it is written, instead of just when it is finished.
+Version control also makes it possible to review changes and, when a change introduces a bug, drop back to working versions of code.
+@end macro
+
+@macro localdevelopmenttools{}
+@c Descriptions of additional, local development tools can be inserted here
+@end macro

@@ -1,0 +1,157 @@
+@node Installing PintOS
+@appendix Installing PintOS
+
+This chapter explains how to install a PintOS development environment on your own machine. 
+We assume that you have already cloned your pintos git repo onto your machine.
+If you are using a PintOS development environment that has been set up by someone else, 
+you should not need to read this chapter or follow any of these instructions.
+
+The PintOS development environment is targeted at Unix-like systems. 
+It has been most extensively tested on GNU/Linux, in particular the Debian and Ubuntu distributions, and Solaris. 
+It is not designed to install under any form of Windows.
+
+@menu
+* Mac Specific Initial Set-up::
+* Prerequisites::      
+* Installation::       
+@end menu
+
+@node Mac Specific Initial Set-up
+@section Mac Specific Initial Set-up
+
+This first section is intended to help Mac users prepare to set-up PintOS so that they can coexist with LabTS and your Linux-using friends, 
+without any on-going hassle.
+If you are not attempting to install PintOS on a Mac, then please skip ahead to the next section.
+
+To prepare your Mac for PintOS, you will need to preform the following initial set-up steps:
+
+@itemize
+@item Download and unpack a prepared selection of cross-compiled GCC binaries from: 
+@uref{https://www.doc.ic.ac.uk/~mjw03/OSLab/mac-i686-elf-gcc-binaries.tar}.@* 
+You can also install these binaries onto your Mac yourself if you prefer.
+    
+@item Add the unpacked GCC binaries to your path with a line like:@*
+@code{export PATH=$PATH:/your/local/path/here/mac-i686-elf-gcc-binaries/bin}
+
+@end itemize
+You should now be ready to follow the remaining instructions in this appendix.
+
+@node Prerequisites
+@section Prerequisites
+
+Before attempting to install a PintOS development environment, you should check that the following prerequisites, 
+on top of standard Unix utilities, are available on your system:
+
+@itemize @bullet
+@item
+@strong{Required:} @uref{http://gcc.gnu.org/, GCC}.  
+Version 5.4 or later is preferred.  
+Version 4.0 or later should work.  
+If the host machine has an 80@var{x}86 processor (32-bit or 64-bit), then GCC should be available via the command @command{gcc}; 
+otherwise, an 80@var{x}86 cross-compiler should be available via the command @command{i386-elf-gcc}. 
+If you need a GCC cross-compiler, but one is not already installed on your system, then you will need to search online for an up-to-date installation guide.
+
+@item
+@strong{Required:} @uref{http://www.gnu.org/software/binutils/, GNU binutils}.
+PintOS uses the Unix utilities @command{addr2line}, @command{ar}, @command{ld}, @command{objcopy}, and @command{ranlib}. 
+If the host machine does not have an 80@var{x}86 processor, then versions targeting 80@var{x}86 should be available to install with an @samp{i386-elf-} prefix.
+
+@item
+@strong{Required:} @uref{http://www.perl.org, Perl}.  
+Version 5.20.0 or later is preferred. 
+Version 5.6.1 or later should work.
+
+@item
+@strong{Required:} @uref{http://www.gnu.org/software/make/, GNU make}. 
+Version 4.0 or later is preferred.
+Version 3.80 or later should work.
+
+@item
+@strong{Required:} @uref{http://fabrice.bellard.free.fr/qemu/, QEMU}.
+The QEMU emulator required to run PintOS is @command{qemu-system-i386} which is part of the @command{qemu-system} package on most modern Unix platforms.
+We recommend using version 2.10 or later, but at least version 2.5.
+
+@item
+@strong{Recommended:} @uref{http://www.gnu.org/software/gdb/, GDB}. 
+GDB is helpful in debugging (@pxref{GDB}). 
+If the host machine is not an 80@var{x}86, a version of GDB targeting 80@var{x}86 should be available as @samp{i386-elf-gdb}.
+
+@item
+@strong{Recommended:} @uref{http://www.x.org/, X}. 
+Being able to use an X server makes the virtual machine feel more like a physical machine, but it is not strictly necessary.
+
+@item
+@strong{Optional:} @uref{http://www.gnu.org/software/texinfo/, Texinfo}. 
+Version 4.5 or later. 
+Texinfo is required to build the PDF version of the main PintOS documentation.
+
+@item
+@strong{Optional:} @uref{http://www.tug.org/, @TeX{}}. 
+@TeX{} is required to build the PDF versions of the support documentation.
+
+@item
+@strong{Optional:} @uref{http://www.vmware.com/, VMware Player}. 
+This is another emulation platform that can be used to run PintOS instead of QEMU.
+You will need to search online for an up-to-date installation guide.
+@end itemize
+
+@node Installation
+@section Installation
+
+Once you have checked that the prerequisites are available, 
+follow these instructions to install a PintOS development environment:
+
+@enumerate 1
+
+@item
+Compile the PintOS utilities in @file{src/utils}.
+
+To do this, open a terminal in the @file{src/utils} directory of your PintOS project and run @command{make}.
+
+@item
+Install scripts from @file{src/utils}. 
+
+This easiest way to do this is to reconfigure your system's @env{PATH} to include the @file{src/utils} directory of your PintOS project.
+You can instead copy the files 
+@file{backtrace}, 
+@file{pintos}, 
+@file{pintos-gdb}, 
+@file{pintos-mkdisk}, 
+@file{pintos-set-cmdline}, 
+@file{Pintos.pm} 
+and 
+@file{squish-pty}
+into your system's default @env{PATH}.
+
+If your Perl is older than version 5.8.0, then you will also need to install @file{setitimer-helper}; otherwise, it is unneeded.
+
+@item 
+Install the GDB macros from @file{src/misc/gdb-macros}.  
+
+The easiest way to do this is to use a text editor to update your previously installed copy of @file{pintos-gdb}
+so that the definition of @env{GDBMACROS} points to your local @file{gdb-macros} file.
+You can instead copy the @file{pintos-gdb} file into a system directory of your choice, 
+but you will still need to update the definition of @env{GDBMACROS} in your installed copy of @file{pintos-gdb}.
+ 
+Test the GDB macro installation by running @command{pintos-gdb} without any arguments. 
+If it does not complain about missing @file{gdb-macros}, it is installed correctly.
+
+@item
+PintOS should now be ready for use.  
+
+To test your installation, open a terminal in the @file{src/devices} directory of your PintOS project and run @command{make check}.
+This will run the tests for Task 0 and should take no more than a few minutes.
+
+@item
+@strong{Optional:} Install alternative emulation software.
+
+To support VMware Player, install @file{squish-unix} (from the @file{src/utils} directory); otherwise it is unneeded.
+
+@item
+@strong{Optional:} Build the PintOS documentation.
+
+Open a terminal in the @file{doc} directory of your PintOS project and run @command{make dist}.
+This will create a @file{WWW} subdirectory within @file{doc} that contains both HTML and PDF versions of the documentation, 
+plus the design document templates and various hardware specifications referenced by the documentation.  
+
+@end enumerate

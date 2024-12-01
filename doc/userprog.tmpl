@@ -1,0 +1,116 @@
+             +-------------------------+
+             |         OS 211          |
+             |  TASK 2: USER PROGRAMS  |
+             |     DESIGN DOCUMENT     |
+             +-------------------------+
+
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, or notes for the
+>> markers, please give them here.
+
+>> Please cite any offline or online sources you consulted while preparing your 
+>> submission, other than the PintOS documentation, course text, lecture notes 
+>> and course staff.
+
+               ARGUMENT PASSING
+               ================
+
+---- DATA STRUCTURES ----
+
+>> A1: (1 mark)
+>> Copy here the declaration of each new or changed `struct' or `struct' member, 
+>> global or static variable, `typedef', or enumeration. 
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> A2: (2 marks)
+>> How does your argument parsing code avoid overflowing the user's stack page?
+>> What are the efficiency considerations of your approach?
+
+---- RATIONALE ----
+
+>> A3: (2 marks)
+>> PintOS does not implement strtok() because it is not thread safe. 
+>> Explain the problem with strtok() and how strtok_r() avoids this issue.
+
+>> A4: (3 marks)
+>> In PintOS, the kernel separates commands into an executable name and arguments. 
+>> In Unix-like systems, the shell does this separation. 
+>> Identify three advantages of the Unix approach.
+
+                 SYSTEM CALLS
+                 ============
+
+---- DATA STRUCTURES ----
+
+>> B1: (6 marks) 
+>> Copy here the declaration of each new or changed `struct' or `struct' member, 
+>> global or static variable, `typedef', or enumeration. 
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> B2: (2 marks)
+>> Describe how your code ensures safe memory access of user provided data from
+>> within the kernel. 
+
+>> B3: (3 marks)
+>> Suppose that we choose to verify user provided pointers by validating them 
+>> before use (i.e. using the first method described in the spec).
+>> What is the least and the greatest possible number of inspections of the page
+>> table (e.g. calls to pagedir_get_page()) that would need to be made in the 
+>> following cases?
+>> a) A system call that passes the kernel a pointer to 10 bytes of user data.
+>> b) A system call that passes the kernel a pointer to a full page 
+>>    (4,096 bytes) of user data.
+>> c) A system call that passes the kernel a pointer to 4 full pages 
+>>    (16,384 bytes) of user data.
+>> You must briefly explain the checking tactic you would use and how it applies 
+>> to each case to generate your answers.
+
+>> B4: (2 marks)
+>> When an error is detected during a system call handler, how do you ensure 
+>> that all temporarily allocated resources (locks, buffers, etc.) are freed?
+
+>> B5: (8 marks)
+>> Describe your implementation of the "wait" system call and how it interacts 
+>> with process termination for both the parent and child.
+
+---- SYNCHRONIZATION ----
+
+>> B6: (2 marks)
+>> The "exec" system call returns -1 if loading the new executable fails, so it 
+>> cannot return before the new executable has completed loading. 
+>> How does your code ensure this? 
+>> How is the load success/failure status passed back to the thread that calls 
+>> "exec"?
+
+>> B7: (5 marks)
+>> Consider parent process P with child process C. 
+>> How do you ensure proper synchronization and avoid race conditions when: 
+>>   i) P calls wait(C) before C exits?
+>>  ii) P calls wait(C) after C exits?
+>> iii) P terminates, without waiting, before C exits?
+>>  iv) P terminates, without waiting, after C exits?
+>> Additionally, how do you ensure that all resources are freed regardless of 
+>> the above case? 
+
+---- RATIONALE ----
+
+>> B8: (2 marks)
+>> Why did you choose to implement safe access of user memory from the kernel in 
+>> the way that you did?
+
+>> B9: (2 marks)
+>> What advantages and disadvantages can you see to your design for file 
+>> descriptors?

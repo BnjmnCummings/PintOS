@@ -1,0 +1,130 @@
+            +--------------------------+
+            |          OS 211          |
+            |  TASK 3: VIRTUAL MEMORY  |
+            |      DESIGN DOCUMENT     |
+            +--------------------------+
+
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+FirstName LastName <email@domain.example>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, or notes for the
+>> markers, please give them here.
+
+>> Please cite any offline or online sources you consulted while preparing your 
+>> submission, other than the PintOS documentation, course text, lecture notes 
+>> and course staff.
+
+            PAGE TABLE MANAGEMENT AND LAZY LOADING
+            ======================================
+
+---- DATA STRUCTURES ----
+
+>> A1: (2 marks)
+>> Copy here the declaration of each new or changed `struct' or `struct' member,
+>> global or static variable, `typedef', or enumeration that relates to your 
+>> supplemental page table and table of file mappings. 
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> A2: (2 marks) 
+>> Describe your code for finding the location of a given page that is not 
+>> currently loaded into memory.
+
+>> A3: (2 marks)
+>> How have you implemented sharing of read only pages?
+
+>> A4: (2 marks)
+>> When a process P obtains a frame that was previously used by a process Q,
+>> how do you adjust the page directory of process Q (and any other data 
+>> structures) to reflect the frame Q no longer has?
+
+---- SYNCHRONIZATION ----
+
+>> A5: (2 marks)
+>> Explain how you handle access to user pages that are not present when a
+>> system call is made.
+
+---- RATIONALE ----
+
+>> A6: (2 marks)
+>> Why did you choose the data structure(s) that you did for representing the
+>> supplemental page table and table of file mappings?
+
+               FRAME TABLE MANAGEMENT AND EVICTION
+               ===================================
+
+---- DATA STRUCTURES ----
+
+>> B1: (1 marks)
+>> Copy here the declaration of each new or changed `struct' or `struct' member,
+>> global or static variable, `typedef', or enumeration that relates to your 
+>> frame table. 
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> B2: (2 marks)
+>> When a frame is required but none is free, some frame must be evicted.
+>> Describe your code for choosing a frame to evict.
+
+---- SYNCHRONIZATION ----
+
+>> B3: (2 marks) 
+>> When two user processes both need a new frame at the same time, how are 
+>> races avoided? 
+>> You should consider both when there are and are not free frames 
+>> available in memory.
+
+>> B4: (2 marks)
+>> A page fault in process P can cause another process Q's frame to be evicted.
+>> How do you ensure that Q cannot access or modify that page during the 
+>> eviction process?
+
+>> B5: (2 marks)
+>> A page fault in process P can cause another process Q's frame to be evicted.
+>> How do you avoid a race between P evicting Q's frame and Q faulting the page
+>> back in?
+
+>> B6: (2 marks)
+>> Explain how your synchronization design prevents deadlock.  
+>> (You may want to refer to the necessary conditions for deadlock.)
+
+---- RATIONALE ----
+
+>> B7: (2 marks)
+>> There is an obvious trade-off between parallelism and the complexity of your
+>> synchronisation methods. 
+>> Explain where your design falls along this continuum and why you chose to 
+>> design it this way.
+
+             MEMORY MAPPED FILES
+             ===================
+
+---- DATA STRUCTURES ----
+
+>> C1: (2 marks)
+>> Copy here the declaration of each new or changed `struct' or `struct' member,
+>> global or static variable, `typedef', or enumeration that relates to your 
+>> file mapping table.  
+>> Identify the purpose of each in roughly 25 words.
+
+---- ALGORITHMS ----
+
+>> C2: (2 marks)
+>> Explain how you determine whether a new file mapping overlaps with any 
+>> existing segment and how you handle such a case.
+
+---- RATIONALE ----
+
+>> C3: (1 mark)
+>> Mappings created with "mmap" have similar semantics to those of data 
+>> demand-paged from executables. 
+>> How does your code-base take advantage of this?

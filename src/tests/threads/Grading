@@ -1,0 +1,7 @@
+# Percentage of the testing point total designated for each set of tests.
+
+5.0%	tests/devices/Rubric.alarmfunc
+5.0%	tests/devices/Rubric.alarmrobust
+45.0%	tests/threads/Rubric.priority
+0.0%	tests/threads/Rubric.priorityCR
+45.0%	tests/threads/Rubric.mlfqs
